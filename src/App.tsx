@@ -89,12 +89,12 @@ export default function App() {
 
   const findNextUncompleted = useCallback(
     (): WordData | null => {
-      for (const w of sortedWords) {
+      for (const w of filteredWords) {
         if (!completedIds.has(w.id)) return w;
       }
       return null;
     },
-    [sortedWords, completedIds]
+    [filteredWords, completedIds]
   );
 
   const scrollToWord = useCallback((id: number) => {
@@ -119,30 +119,18 @@ export default function App() {
   const handleContinue = useCallback(() => {
     const next = findNextUncompleted();
     if (next) {
-      if (activeTheme !== '__all__' && next.theme !== activeTheme) {
-        setActiveTheme('__all__');
-        setTimeout(() => {
-          scrollToWord(next.id);
-          setTimeout(() => {
-            triggerCopy(next.id);
-            focusInput(next.id);
-          }, 200);
-        }, 100);
-      } else {
-        scrollToWord(next.id);
-        setTimeout(() => {
-          triggerCopy(next.id);
-          focusInput(next.id);
-        }, 200);
-      }
+      scrollToWord(next.id);
+      setTimeout(() => {
+        triggerCopy(next.id);
+        focusInput(next.id);
+      }, 200);
     }
-  }, [findNextUncompleted, activeTheme, scrollToWord, triggerCopy, focusInput]);
+  }, [findNextUncompleted, scrollToWord, triggerCopy, focusInput]);
 
   const handleEnterCorrect = useCallback(
     (currentId: number) => {
-      // completedIds state hasn't updated yet, so skip currentId manually
       let next: WordData | null = null;
-      for (const w of sortedWords) {
+      for (const w of filteredWords) {
         if (w.id === currentId) continue;
         if (!completedIds.has(w.id)) {
           next = w;
@@ -157,7 +145,7 @@ export default function App() {
         }, 200);
       }
     },
-    [sortedWords, completedIds, scrollToWord, triggerCopy, focusInput]
+    [filteredWords, completedIds, scrollToWord, triggerCopy, focusInput]
   );
 
   const handleSaveCertificate = useCallback(async () => {
