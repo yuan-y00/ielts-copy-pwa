@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "word": "allocate",
+    "theme": "Business",
+    "translation": "分配",
+    "shortMeaningInSentence": "to distribute resources for a purpose",
+    "exampleEn": "The government decided to allocate more funds to public education this year.",
+    "exampleZh": "政府决定今年 allocate 更多资金给公共教育"
+  },
+  {
+    "id": 2,
+    "word": "ambiguous",
+    "theme": "Academic",
+    "translation": "模糊的",
+    "shortMeaningInSentence": "open to more than one interpretation",
+    "exampleEn": "The results of the experiment were ambiguous and required further analysis.",
+    "exampleZh": "实验结果很 ambiguous 需要进一步分析"
+  },
+  {
+    "id": 3,
+    "word": "commodity",
+    "theme": "Business",
+    "translation": "商品",
+    "shortMeaningInSentence": "a raw material that can be bought and sold",
+    "exampleEn": "Oil is one of the most traded commodities in the global market.",
+    "exampleZh": "石油是全球市场上交易量最大的 commodity 之一"
+  },
+  {
+    "id": 4,
+    "word": "controversy",
+    "theme": "Society",
+    "translation": "争议",
+    "shortMeaningInSentence": "prolonged public disagreement",
+    "exampleEn": "The new policy caused a great deal of controversy among the public.",
+    "exampleZh": "新政策在公众中引起了很大的 controversy"
+  },
+  {
+    "id": 5,
+    "word": "diminish",
+    "theme": "Academic",
+    "translation": "减少",
+    "shortMeaningInSentence": "to make or become less",
+    "exampleEn": "The pain will gradually diminish over the next few hours.",
+    "exampleZh": "疼痛会在接下来的几小时内逐渐 diminish"
+  },
+  {
+    "id": 6,
+    "word": "equivalent",
+    "theme": "Academic",
+    "translation": "等同的",
+    "shortMeaningInSentence": "equal in value or meaning",
+    "exampleEn": "One mile is roughly equivalent to 1.6 kilometers.",
+    "exampleZh": "一英里 roughly equivalent to 1.6 公里"
+  },
+  {
+    "id": 7,
+    "word": "fluctuate",
+    "theme": "Business",
+    "translation": "波动",
+    "shortMeaningInSentence": "to rise and fall irregularly",
+    "exampleEn": "Stock prices tend to fluctuate throughout the trading day.",
+    "exampleZh": "股票价格在交易日中往往会 fluctuate"
+  },
+  {
+    "id": 8,
+    "word": "hypothesis",
+    "theme": "Science",
+    "translation": "假设",
+    "shortMeaningInSentence": "a proposed explanation for a phenomenon",
+    "exampleEn": "The scientist tested her hypothesis through a series of experiments.",
+    "exampleZh": "科学家通过一系列实验验证了她的 hypothesis"
+  },
+  {
+    "id": 9,
+    "word": "implement",
+    "theme": "Business",
+    "translation": "实施",
+    "shortMeaningInSentence": "to put a plan into action",
+    "exampleEn": "The company plans to implement the new security system next month.",
+    "exampleZh": "公司计划下个月 implement 新的安全系统"
+  },
+  {
+    "id": 10,
+    "word": "inevitable",
+    "theme": "Academic",
+    "translation": "不可避免的",
+    "shortMeaningInSentence": "certain to happen and unavoidable",
+    "exampleEn": "Change is inevitable in any growing organization.",
+    "exampleZh": "在任何成长中的组织里 变化都是 inevitable 的"
+  },
+  {
+    "id": 11,
+    "word": "interpret",
+    "theme": "Academic",
+    "translation": "解释",
+    "shortMeaningInSentence": "to explain the meaning of something",
+    "exampleEn": "We need to interpret the data before drawing any conclusions.",
+    "exampleZh": "在得出结论之前 我们需要 interpret 这些数据"
+  },
+  {
+    "id": 12,
+    "word": "migration",
+    "theme": "Society",
+    "translation": "迁徙",
+    "shortMeaningInSentence": "movement from one place to another",
+    "exampleEn": "The annual migration of birds is a remarkable natural phenomenon.",
+    "exampleZh": "鸟类每年的 migration 是一个了不起的自然现象"
+  },
+  {
+    "id": 13,
+    "word": "phenomenon",
+    "theme": "Science",
+    "translation": "现象",
+    "shortMeaningInSentence": "a fact or event that can be observed",
+    "exampleEn": "The northern lights are a beautiful natural phenomenon.",
+    "exampleZh": "北极光是一种美丽的自然 phenomenon"
+  },
+  {
+    "id": 14,
+    "word": "proportion",
+    "theme": "Academic",
+    "translation": "比例",
+    "shortMeaningInSentence": "a part or share of a whole",
+    "exampleEn": "A large proportion of students find part-time jobs during their studies.",
+    "exampleZh": "很大 proportion 的学生在学习期间做兼职"
+  },
+  {
+    "id": 15,
+    "word": "relevant",
+    "theme": "Academic",
+    "translation": "相关的",
+    "shortMeaningInSentence": "closely connected to the matter at hand",
+    "exampleEn": "Please provide only the information that is relevant to this case.",
+    "exampleZh": "请只提供与本案 relevant 的信息"
+  },
+  {
+    "id": 16,
+    "word": "sophisticated",
+    "theme": "Academic",
+    "translation": "精密的",
+    "shortMeaningInSentence": "complex and refined",
+    "exampleEn": "The laboratory is equipped with sophisticated instruments for research.",
+    "exampleZh": "实验室配备了 sophisticated 的研究仪器"
+  },
+  {
+    "id": 17,
+    "word": "sustainable",
+    "theme": "Environment",
+    "translation": "可持续的",
+    "shortMeaningInSentence": "able to be maintained at a certain rate",
+    "exampleEn": "We need to find sustainable solutions for our energy needs.",
+    "exampleZh": "我们需要为能源需求找到 sustainable 的解决方案"
+  },
+  {
+    "id": 18,
+    "word": "undergo",
+    "theme": "Academic",
+    "translation": "经历",
+    "shortMeaningInSentence": "to experience or be subjected to",
+    "exampleEn": "All new employees must undergo a training session before starting work.",
+    "exampleZh": "所有新员工必须在开始工作前 undergo 培训"
+  },
+  {
+    "id": 19,
+    "word": "valid",
+    "theme": "Academic",
+    "translation": "有效的",
+    "shortMeaningInSentence": "logically sound and acceptable",
+    "exampleEn": "You need a valid passport to travel abroad.",
+    "exampleZh": "你需要一本 valid 护照才能出国旅行"
+  },
+  {
+    "id": 20,
+    "word": "welfare",
+    "theme": "Society",
+    "translation": "福利",
+    "shortMeaningInSentence": "the health and happiness of a person or group",
+    "exampleEn": "The organization works to improve the welfare of children in need.",
+    "exampleZh": "该组织致力于改善贫困儿童的 welfare"
+  }
+]
