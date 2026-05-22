@@ -2,22 +2,23 @@
   "name": "IELTS Copy",
   "short_name": "IELTS Copy",
   "description": "IELTS vocabulary copying practice app",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/ielts-copy-pwa/",
+  "scope": "/ielts-copy-pwa/",
+  "id": "/ielts-copy-pwa/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f5f5f7",
-  "theme_color": "#4f46e5",
+  "background_color": "#EEF2F7",
+  "theme_color": "#2563EB",
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/ielts-copy-pwa/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/ielts-copy-pwa/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
