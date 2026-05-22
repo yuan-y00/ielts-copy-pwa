@@ -9,6 +9,7 @@ import CelebrationModal from './components/CelebrationModal';
 import Certificate from './components/Certificate';
 import {
   getCompletedIds,
+  getValidCompletedIds,
   markCompleted,
   getLastCelebratedMilestone,
   setLastCelebratedMilestone,
@@ -73,9 +74,10 @@ export default function App() {
       const data = await loadWordPack(currentPackId);
       if (cancelled) return;
 
+      const validIds = new Set(data.map((w) => String(w.id)));
       setWords(data);
       setActiveTheme('__all__');
-      setCompletedIds(new Set(getCompletedIds(currentPackId)));
+      setCompletedIds(new Set(getValidCompletedIds(currentPackId, validIds)));
       setIsLoadingPack(false);
     }
     load();
@@ -246,18 +248,27 @@ export default function App() {
 
   const handleImportConfirm = useCallback(() => {
     if (!importConfirmData) return;
-    const result = importAllProgress(importConfirmData, validPackIdSet);
+    const validItemIdsByPack = new Map<string, Set<string>>();
+    const currentValidIds = new Set(words.map((w) => String(w.id)));
+    validItemIdsByPack.set(currentPackId, currentValidIds);
+    const result = importAllProgress(importConfirmData, validPackIdSet, validItemIdsByPack);
     setImportConfirmData(null);
     if (result.ok) {
-      if (result.imported.length === 0) {
+      if (result.packs.length === 0) {
         setImportStatus({ type: 'err', msg: 'No matching word packs found in file.' });
       } else {
-        setImportStatus({ type: 'ok', msg: `Imported progress for ${result.imported.length} pack(s). Refresh the page to apply.` });
+        const totalOrphaned = result.packs.reduce((sum, p) => sum + p.droppedOrphanedCount, 0);
+        let msg = `Imported ${result.packs.length} pack(s).`;
+        if (totalOrphaned > 0) {
+          msg += ` ${totalOrphaned} old item(s) no longer exist and were skipped.`;
+        }
+        msg += ' Refresh the page to apply.';
+        setImportStatus({ type: 'ok', msg });
       }
     } else {
       setImportStatus({ type: 'err', msg: result.error });
     }
-  }, [importConfirmData, validPackIdSet]);
+  }, [importConfirmData, validPackIdSet, currentPackId, words]);
 
   const handleImportCancel = useCallback(() => {
     setImportConfirmData(null);

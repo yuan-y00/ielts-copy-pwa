@@ -26,6 +26,19 @@ export function getCompletedIds(
   }
 }
 
+export function getValidCompletedIds(
+  packId: WordPackId,
+  validItemIds: Set<string>,
+): string[] {
+  const raw = getCompletedIds(packId);
+  if (raw.length === 0) return [];
+  const kept = raw.filter((id) => validItemIds.has(id));
+  if (kept.length < raw.length) {
+    localStorage.setItem(progressKey(packId), JSON.stringify(kept));
+  }
+  return kept;
+}
+
 export function markCompleted(
   id: number | string,
   packId: WordPackId = 'ielts-exam-context-2000',
@@ -132,10 +145,18 @@ export function exportAllProgress(packIds: WordPackId[]): void {
   URL.revokeObjectURL(url);
 }
 
+export interface ImportPackResult {
+  packId: string;
+  importedCount: number;
+  keptCount: number;
+  droppedOrphanedCount: number;
+}
+
 export function importAllProgress(
   json: unknown,
   validPackIds: Set<string>,
-): { ok: true; imported: string[] } | { ok: false; error: string } {
+  validItemIdsByPack?: Map<string, Set<string>>,
+): { ok: true; packs: ImportPackResult[] } | { ok: false; error: string } {
   if (!json || typeof json !== 'object') {
     return { ok: false, error: 'Invalid file: not a JSON object.' };
   }
@@ -155,7 +176,7 @@ export function importAllProgress(
     return { ok: false, error: 'Missing or invalid progressByPack.' };
   }
 
-  const imported: string[] = [];
+  const packs: ImportPackResult[] = [];
 
   for (const [packId, packData] of Object.entries(byPack as Record<string, unknown>)) {
     if (!validPackIds.has(packId)) continue;
@@ -163,10 +184,22 @@ export function importAllProgress(
 
     const pd = packData as Record<string, unknown>;
 
-    const completedIds = pd.completedIds;
-    if (Array.isArray(completedIds)) {
-      const ids = completedIds.map((v) => String(v));
-      localStorage.setItem(progressKey(packId as WordPackId), JSON.stringify(ids));
+    const rawIds: string[] = Array.isArray(pd.completedIds)
+      ? pd.completedIds.map((v) => String(v))
+      : [];
+    const importedCount = rawIds.length;
+
+    const validIds = validItemIdsByPack?.get(packId);
+    const filteredIds = validIds
+      ? rawIds.filter((id) => validIds.has(id))
+      : rawIds;
+    const keptCount = filteredIds.length;
+    const droppedOrphanedCount = importedCount - keptCount;
+
+    if (filteredIds.length > 0) {
+      localStorage.setItem(progressKey(packId as WordPackId), JSON.stringify(filteredIds));
+    } else if (importedCount > 0 && validIds) {
+      localStorage.removeItem(progressKey(packId as WordPackId));
     }
 
     if (typeof pd.lastMilestone === 'number') {
@@ -177,8 +210,8 @@ export function importAllProgress(
       localStorage.setItem(`copybook:${packId}:name`, pd.name);
     }
 
-    imported.push(packId);
+    packs.push({ packId, importedCount, keptCount, droppedOrphanedCount });
   }
 
-  return { ok: true, imported };
+  return { ok: true, packs };
 }
