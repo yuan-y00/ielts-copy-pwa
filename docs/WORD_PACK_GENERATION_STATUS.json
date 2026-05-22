@@ -1,0 +1,50 @@
+{
+  "currentPriority": "cleanup_preparation",
+  "packs": {
+    "ielts-exam-context-2000": {
+      "current": 1185,
+      "status": "paused_for_quality_review",
+      "target": null,
+      "targetPolicy": "reasonable_core_no_hard_target",
+      "note": "Paused. No hard target. Quality reviewed - no major issues found."
+    },
+    "ai-product-management-llm-products-1000": {
+      "current": 433,
+      "status": "core_ready_candidate_exhausted",
+      "target": 500,
+      "targetPolicy": "around_500",
+      "note": "Do not generate more until cleanup pass is complete."
+    },
+    "robotics-rd-engineering-research-1000": {
+      "current": 707,
+      "status": "core_ready",
+      "target": 500,
+      "targetPolicy": "around_500",
+      "note": "707 items retained. No mechanical compounds detected. ExtraEn warnings from technical terms in Chinese context are acceptable."
+    },
+    "robotics-maintenance-troubleshooting-1000": {
+      "current": 393,
+      "status": "core_ready_candidate_exhausted",
+      "target": 500,
+      "targetPolicy": "around_500",
+      "note": "Do not generate more until cleanup pass is complete."
+    },
+    "foreign-trade-crowdfunding-dtc-operations-1000": {
+      "current": 720,
+      "status": "core_ready",
+      "target": 700,
+      "targetPolicy": "around_700",
+      "note": "Cleaned 1000->720. Practical Core size achieved."
+    },
+    "smart-hardware-overseas-channel-sales-core": {
+      "current": 301,
+      "status": "core_ready_candidate_exhausted",
+      "target": 500,
+      "targetPolicy": "around_500",
+      "note": "Do not generate more until cleanup pass is complete."
+    }
+  },
+  "lastAction": "Round 3 final cleanup complete. All packs validated and built successfully.",
+  "lastValidatePassed": true,
+  "lastBuildPassed": true
+}
