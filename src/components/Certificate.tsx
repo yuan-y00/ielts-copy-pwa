@@ -3,15 +3,16 @@ import { forwardRef } from 'react';
 interface CertificateProps {
   name: string;
   date: string;
+  packTitle: string;
 }
 
 const Certificate = forwardRef<HTMLDivElement, CertificateProps>(
-  ({ name, date }, ref) => {
+  ({ name, date, packTitle }, ref) => {
     return (
       <div className="certificate" ref={ref}>
         <div className="certificate__inner">
           <div className="certificate__border">
-            <h2 className="certificate__title">雅思核心词汇</h2>
+            <h2 className="certificate__title">{packTitle}</h2>
             <p className="certificate__subtitle">抄写完成证书</p>
 
             <div className="certificate__body">

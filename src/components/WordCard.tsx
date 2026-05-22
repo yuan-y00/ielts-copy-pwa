@@ -2,19 +2,20 @@ import { useRef, useState } from 'react';
 import { speak, speakSequence } from '../utils/speech';
 
 export interface WordData {
-  id: number;
+  id: number | string;
   word: string;
   theme: string;
   translation: string;
   shortMeaningInSentence: string;
   exampleEn: string;
   exampleZh: string;
+  fullForm?: string;
 }
 
 interface WordCardProps {
   word: WordData;
   completed: boolean;
-  onComplete: (id: number) => void;
+  onComplete: (id: number | string) => void;
   inputRef?: React.RefObject<HTMLInputElement>;
   onEnterCorrect?: () => void;
 }
@@ -88,7 +89,7 @@ export default function WordCard({
   };
 
   return (
-    <div className="word-card">
+    <div className={`word-card${completed ? ' word-card--completed' : ''}`}>
       <div className="word-card__header">
         <div className="word-card__word-row">
           <button
@@ -103,6 +104,7 @@ export default function WordCard({
           <span className="word-card__word">{word.word}</span>
           <span className="word-card__translation">{word.translation}</span>
         </div>
+        {word.fullForm && <p className="word-card__full-form">{word.fullForm}</p>}
         <p className="word-card__meaning">{word.shortMeaningInSentence}</p>
       </div>
 

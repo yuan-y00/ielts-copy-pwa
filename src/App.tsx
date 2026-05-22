@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import wordsData from './data/ielts_words.json';
-import type { WordData } from './components/WordCard';
+import type { DisplayWordData, WordPackId, WordPackMeta } from './types/wordPack';
+import { loadWordPack, getWordPackMeta, DEFAULT_PACK_ID } from './data/packs';
+import PackSelector from './components/PackSelector';
 import ProgressHeader from './components/ProgressHeader';
 import ThemeTabs from './components/ThemeTabs';
 import WordCard from './components/WordCard';
@@ -17,27 +18,64 @@ import {
 import { saveCertificateImage } from './utils/certificate';
 import { speakSequence } from './utils/speech';
 
-const words = wordsData as WordData[];
-
-function getSorted(words: WordData[]): WordData[] {
-  return [...words].sort((a, b) => a.id - b.id);
+function getSorted(words: DisplayWordData[]): DisplayWordData[] {
+  return [...words].sort((a, b) => Number(a.id) - Number(b.id));
 }
 
+const ALL_PACK_IDS: WordPackId[] = [
+  'ielts-exam-context-2000',
+  'robotics-maintenance-troubleshooting-1000',
+  'foreign-trade-crowdfunding-dtc-operations-1000',
+  'robotics-rd-engineering-research-1000',
+  'ai-product-management-llm-products-1000',
+  'smart-hardware-overseas-channel-sales-core',
+];
+
 export default function App() {
-  const [completedIds, setCompletedIds] = useState<Set<number>>(() => {
-    return new Set(getCompletedIds());
+  const [currentPackId, setCurrentPackId] =
+    useState<WordPackId>(DEFAULT_PACK_ID);
+  const [words, setWords] = useState<DisplayWordData[]>([]);
+  const [isLoadingPack, setIsLoadingPack] = useState(true);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(() => {
+    return new Set(getCompletedIds(DEFAULT_PACK_ID));
   });
   const [activeTheme, setActiveTheme] = useState('__all__');
-  const [celebrationMilestone, setCelebrationMilestone] = useState<number | null>(null);
+  const [celebrationMilestone, setCelebrationMilestone] =
+    useState<number | null>(null);
   const [showCertificate, setShowCertificate] = useState(false);
-  const [certName, setCertName] = useState(getUserName);
+  const [certName, setCertName] = useState(() =>
+    getUserName(DEFAULT_PACK_ID),
+  );
   const [nameInputOpen, setNameInputOpen] = useState(false);
 
   const certRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const copyTriggers = useRef<Map<number, () => void>>(new Map());
-  const inputRefs = useRef<Map<number, HTMLInputElement>>(new Map());
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const copyTriggers = useRef<Map<string, () => void>>(new Map());
+  const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
+
+  // Load word pack when packId changes
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setIsLoadingPack(true);
+      cardRefs.current.clear();
+      copyTriggers.current.clear();
+      inputRefs.current.clear();
+
+      const data = await loadWordPack(currentPackId);
+      if (cancelled) return;
+
+      setWords(data);
+      setActiveTheme('__all__');
+      setCompletedIds(new Set(getCompletedIds(currentPackId)));
+      setIsLoadingPack(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentPackId]);
 
   // Measure header height for scroll-margin and padding-top
   useEffect(() => {
@@ -53,7 +91,7 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  const sortedWords = useMemo(() => getSorted(words), []);
+  const sortedWords = useMemo(() => getSorted(words), [words]);
   const total = sortedWords.length;
   const completed = completedIds.size;
   const allDone = completed === total && total > 0;
@@ -62,7 +100,7 @@ export default function App() {
     const set = new Set<string>();
     words.forEach((w) => set.add(w.theme));
     return [...set].sort();
-  }, []);
+  }, [words]);
 
   const filteredWords = useMemo(() => {
     if (activeTheme === '__all__') return sortedWords;
@@ -72,51 +110,54 @@ export default function App() {
   // Celebration check
   useEffect(() => {
     const milestone = Math.floor(completed / 50) * 50;
-    if (milestone > 0 && milestone > getLastCelebratedMilestone()) {
-      setLastCelebratedMilestone(milestone);
+    if (
+      milestone > 0 &&
+      milestone > getLastCelebratedMilestone(currentPackId)
+    ) {
+      setLastCelebratedMilestone(milestone, currentPackId);
       setCelebrationMilestone(milestone);
     }
-  }, [completed]);
+  }, [completed, currentPackId]);
 
-  const handleComplete = useCallback((id: number) => {
-    markCompleted(id);
-    setCompletedIds((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
-  }, []);
-
-  const findNextUncompleted = useCallback(
-    (): WordData | null => {
-      for (const w of filteredWords) {
-        if (!completedIds.has(w.id)) return w;
-      }
-      return null;
+  const handleComplete = useCallback(
+    (id: number | string) => {
+      markCompleted(id, currentPackId);
+      setCompletedIds((prev) => {
+        const next = new Set(prev);
+        next.add(String(id));
+        return next;
+      });
     },
-    [filteredWords, completedIds]
+    [currentPackId],
   );
 
-  const scrollToWord = useCallback((id: number) => {
-    const el = cardRefs.current.get(id);
+  const findNextUncompleted = useCallback((): DisplayWordData | null => {
+    for (const w of filteredWords) {
+      if (!completedIds.has(String(w.id))) return w;
+    }
+    return null;
+  }, [filteredWords, completedIds]);
+
+  const scrollToWord = useCallback((id: number | string) => {
+    const el = cardRefs.current.get(String(id));
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }, []);
 
-  const triggerCopy = useCallback((id: number) => {
-    const fn = copyTriggers.current.get(id);
+  const triggerCopy = useCallback((id: number | string) => {
+    const fn = copyTriggers.current.get(String(id));
     if (fn) fn();
   }, []);
 
-  const focusInput = useCallback((id: number) => {
-    const input = inputRefs.current.get(id);
+  const focusInput = useCallback((id: number | string) => {
+    const input = inputRefs.current.get(String(id));
     if (input) {
       setTimeout(() => input.focus(), 150);
     }
   }, []);
 
-  const handleContinue = useCallback(() => {
+  const goToFirstUncompletedInCurrentPack = useCallback(() => {
     const next = findNextUncompleted();
     if (next) {
       scrollToWord(next.id);
@@ -127,12 +168,12 @@ export default function App() {
     }
   }, [findNextUncompleted, scrollToWord, triggerCopy, focusInput]);
 
-  const handleEnterCorrect = useCallback(
-    (currentId: number) => {
-      let next: WordData | null = null;
+  const goToNextUncompletedInCurrentTheme = useCallback(
+    (currentId: number | string) => {
+      let next: DisplayWordData | null = null;
       for (const w of filteredWords) {
-        if (w.id === currentId) continue;
-        if (!completedIds.has(w.id)) {
+        if (String(w.id) === String(currentId)) continue;
+        if (!completedIds.has(String(w.id))) {
           next = w;
           break;
         }
@@ -145,24 +186,24 @@ export default function App() {
         }, 200);
       }
     },
-    [filteredWords, completedIds, scrollToWord, triggerCopy, focusInput]
+    [filteredWords, completedIds, scrollToWord, triggerCopy, focusInput],
   );
 
   const handleSaveCertificate = useCallback(async () => {
-    const savedName = getUserName();
+    const savedName = getUserName(currentPackId);
     if (!savedName) {
       setNameInputOpen(true);
       return;
     }
     setCertName(savedName);
     setShowCertificate(true);
-  }, []);
+  }, [currentPackId]);
 
   const handleNameSubmit = useCallback(() => {
-    setUserName(certName);
+    setUserName(certName, currentPackId);
     setNameInputOpen(false);
     setShowCertificate(true);
-  }, [certName]);
+  }, [certName, currentPackId]);
 
   useEffect(() => {
     if (showCertificate && certRef.current) {
@@ -175,25 +216,41 @@ export default function App() {
     }
   }, [showCertificate]);
 
-  const registerCardRef = useCallback((id: number, el: HTMLDivElement | null) => {
-    if (el) {
-      cardRefs.current.set(id, el);
-    } else {
-      cardRefs.current.delete(id);
-    }
-  }, []);
+  const registerCardRef = useCallback(
+    (id: number | string, el: HTMLDivElement | null) => {
+      if (el) {
+        cardRefs.current.set(String(id), el);
+      } else {
+        cardRefs.current.delete(String(id));
+      }
+    },
+    [],
+  );
 
-  const registerCopyTrigger = useCallback((id: number, fn: () => void) => {
-    copyTriggers.current.set(id, fn);
-  }, []);
+  const registerCopyTrigger = useCallback(
+    (id: number | string, fn: () => void) => {
+      copyTriggers.current.set(String(id), fn);
+    },
+    [],
+  );
 
-  const registerInputRef = useCallback((id: number, el: HTMLInputElement | null) => {
-    if (el) {
-      inputRefs.current.set(id, el);
-    } else {
-      inputRefs.current.delete(id);
-    }
-  }, []);
+  const registerInputRef = useCallback(
+    (id: number | string, el: HTMLInputElement | null) => {
+      if (el) {
+        inputRefs.current.set(String(id), el);
+      } else {
+        inputRefs.current.delete(String(id));
+      }
+    },
+    [],
+  );
+
+  const allPacks: WordPackMeta[] = useMemo(
+    () => ALL_PACK_IDS.map((id) => getWordPackMeta(id)),
+    [],
+  );
+
+  const packMeta = getWordPackMeta(currentPackId);
 
   const today = new Date().toLocaleDateString('zh-CN', {
     year: 'numeric',
@@ -205,11 +262,16 @@ export default function App() {
     <div className="app">
       <div className="app__header" ref={headerRef}>
         <div className="app__header-inner">
+          <PackSelector
+            packs={allPacks}
+            currentPackId={currentPackId}
+            onChange={setCurrentPackId}
+          />
           <ProgressHeader
             completed={completed}
             total={total}
             allDone={allDone}
-            onContinue={handleContinue}
+            onContinue={goToFirstUncompletedInCurrentPack}
             onSaveCertificate={handleSaveCertificate}
           />
           <ThemeTabs
@@ -221,18 +283,22 @@ export default function App() {
       </div>
 
       <div className="app__list">
-        {filteredWords.map((word) => (
-          <WordCardWrapper
-            key={word.id}
-            word={word}
-            completed={completedIds.has(word.id)}
-            onComplete={handleComplete}
-            onEnterCorrect={handleEnterCorrect}
-            registerCardRef={registerCardRef}
-            registerCopyTrigger={registerCopyTrigger}
-            registerInputRef={registerInputRef}
-          />
-        ))}
+        {isLoadingPack ? (
+          <div className="app__loading">Loading...</div>
+        ) : (
+          filteredWords.map((word) => (
+            <WordCardWrapper
+              key={String(word.id)}
+              word={word}
+              completed={completedIds.has(String(word.id))}
+              onComplete={handleComplete}
+              onEnterCorrect={goToNextUncompletedInCurrentTheme}
+              registerCardRef={registerCardRef}
+              registerCopyTrigger={registerCopyTrigger}
+              registerInputRef={registerInputRef}
+            />
+          ))
+        )}
       </div>
 
       {celebrationMilestone !== null && (
@@ -266,7 +332,12 @@ export default function App() {
 
       {showCertificate && (
         <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-          <Certificate ref={certRef} name={certName} date={today} />
+          <Certificate
+            ref={certRef}
+            name={certName}
+            date={today}
+            packTitle={packMeta.title}
+          />
         </div>
       )}
     </div>
@@ -283,13 +354,13 @@ function WordCardWrapper({
   registerCopyTrigger,
   registerInputRef,
 }: {
-  word: WordData;
+  word: DisplayWordData;
   completed: boolean;
-  onComplete: (id: number) => void;
-  onEnterCorrect: (id: number) => void;
-  registerCardRef: (id: number, el: HTMLDivElement | null) => void;
-  registerCopyTrigger: (id: number, fn: () => void) => void;
-  registerInputRef: (id: number, el: HTMLInputElement | null) => void;
+  onComplete: (id: number | string) => void;
+  onEnterCorrect: (id: number | string) => void;
+  registerCardRef: (id: number | string, el: HTMLDivElement | null) => void;
+  registerCopyTrigger: (id: number | string, fn: () => void) => void;
+  registerInputRef: (id: number | string, el: HTMLInputElement | null) => void;
 }) {
   const cardElRef = useRef<HTMLDivElement>(null);
   const inputElRef = useRef<HTMLInputElement>(null);

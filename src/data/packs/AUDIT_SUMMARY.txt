@@ -1,0 +1,3 @@
+robot-maintenance: total=1000, noun=400, verb=260, adjective=270, adverb=70, duplicateExampleEn=0
+robotics-rd-research: total=1000, noun=400, verb=260, adjective=270, adverb=70, duplicateExampleEn=0
+foreign-trade-crowdfunding-dtc: total=1000, noun=400, verb=260, adjective=270, adverb=70, duplicateExampleEn=0
