@@ -14,6 +14,8 @@ import {
   setLastCelebratedMilestone,
   getUserName,
   setUserName,
+  exportAllProgress,
+  importAllProgress,
 } from './utils/storage';
 import { saveCertificateImage } from './utils/certificate';
 import { speakSequence } from './utils/speech';
@@ -47,9 +49,14 @@ export default function App() {
     getUserName(DEFAULT_PACK_ID),
   );
   const [nameInputOpen, setNameInputOpen] = useState(false);
+  const [importConfirmData, setImportConfirmData] =
+    useState<Record<string, unknown> | null>(null);
+  const [importStatus, setImportStatus] =
+    useState<{ type: 'ok' | 'err'; msg: string } | null>(null);
 
   const certRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const copyTriggers = useRef<Map<string, () => void>>(new Map());
   const inputRefs = useRef<Map<string, HTMLInputElement>>(new Map());
@@ -205,6 +212,57 @@ export default function App() {
     setShowCertificate(true);
   }, [certName, currentPackId]);
 
+  const validPackIdSet = useMemo(
+    () => new Set(ALL_PACK_IDS),
+    [],
+  );
+
+  const handleExport = useCallback(() => {
+    exportAllProgress(ALL_PACK_IDS);
+  }, []);
+
+  const handleImportFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportStatus(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const json = JSON.parse(reader.result as string);
+        setImportConfirmData(json);
+      } catch {
+        setImportStatus({ type: 'err', msg: 'Invalid JSON file.' });
+      }
+    };
+    reader.onerror = () => {
+      setImportStatus({ type: 'err', msg: 'Failed to read file.' });
+    };
+    reader.readAsText(file);
+
+    // Reset input so same file can be re-selected
+    e.target.value = '';
+  }, []);
+
+  const handleImportConfirm = useCallback(() => {
+    if (!importConfirmData) return;
+    const result = importAllProgress(importConfirmData, validPackIdSet);
+    setImportConfirmData(null);
+    if (result.ok) {
+      if (result.imported.length === 0) {
+        setImportStatus({ type: 'err', msg: 'No matching word packs found in file.' });
+      } else {
+        setImportStatus({ type: 'ok', msg: `Imported progress for ${result.imported.length} pack(s). Refresh the page to apply.` });
+      }
+    } else {
+      setImportStatus({ type: 'err', msg: result.error });
+    }
+  }, [importConfirmData, validPackIdSet]);
+
+  const handleImportCancel = useCallback(() => {
+    setImportConfirmData(null);
+  }, []);
+
   useEffect(() => {
     if (showCertificate && certRef.current) {
       setTimeout(async () => {
@@ -267,6 +325,40 @@ export default function App() {
             currentPackId={currentPackId}
             onChange={setCurrentPackId}
           />
+          <div className="progress-sync">
+            <button
+              className="btn btn--sync"
+              onClick={handleExport}
+              title="Export progress"
+            >
+              Export
+            </button>
+            <button
+              className="btn btn--sync"
+              onClick={() => fileInputRef.current?.click()}
+              title="Import progress"
+            >
+              Import
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              style={{ display: 'none' }}
+              onChange={handleImportFile}
+            />
+          </div>
+          {importStatus && (
+            <div
+              className={`progress-sync-msg ${
+                importStatus.type === 'ok'
+                  ? 'progress-sync-msg--ok'
+                  : 'progress-sync-msg--err'
+              }`}
+            >
+              {importStatus.msg}
+            </div>
+          )}
           <ProgressHeader
             completed={completed}
             total={total}
@@ -326,6 +418,29 @@ export default function App() {
             <button className="btn btn--primary" onClick={handleNameSubmit}>
               生成证书
             </button>
+          </div>
+        </div>
+      )}
+
+      {importConfirmData && (
+        <div className="name-overlay" onClick={handleImportCancel}>
+          <div className="name-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>确认导入</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: 16 }}>
+              导入会覆盖当前本地学习进度，确定继续吗？
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+              <button className="btn btn--primary" onClick={handleImportConfirm}>
+                确定导入
+              </button>
+              <button
+                className="btn"
+                onClick={handleImportCancel}
+                style={{ background: 'var(--border)', color: 'var(--text)' }}
+              >
+                取消
+              </button>
+            </div>
           </div>
         </div>
       )}
