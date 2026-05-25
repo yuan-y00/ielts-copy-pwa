@@ -10,6 +10,8 @@ const VALID_TYPES = new Set([
   'phrase',
   'collocation',
   'sentence_pattern',
+  'verb',
+  'phrasal_verb',
 ]);
 
 const PACKS = [

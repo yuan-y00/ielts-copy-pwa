@@ -469,6 +469,9 @@ The kinematics solver fails when the target is out of the workspace.
 3. 优先 source_grounded_rewrite（句子短，适合抄写，又保留准确信息）。
 4. sourceUrl 不能为空，不能是假链接。
 
+**词性覆盖要求**:
+机器人研发 Sourced Core 不应只包含名词/术语。必须包含常用研发动词、短语动词、调试动作、控制动作、感知动作、仿真动作和实验动作。这些动词也必须来源驱动，不能无来源编写 example。
+
 ### 7.4 Robotics Maintenance Troubleshooting 1000
 
 - **packId**: robotics-maintenance-troubleshooting-1000

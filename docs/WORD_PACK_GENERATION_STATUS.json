@@ -16,11 +16,12 @@
       "note": "Do not generate more until cleanup pass is complete."
     },
     "robotics-rd-engineering-research-1000": {
-      "current": 111,
+      "current": 216,
       "status": "sourced_core",
       "target": null,
       "targetPolicy": "source_driven_quality_first",
-      "note": "Rebuilt as source-driven Sourced Core. All 111 items have verified sourceUrl/sourceTitle/sourceQuality/sourceEvidence. No original-style or unsourced items remain."
+      "note": "Sourced Core: 105 verbs added. Total 216 items. All source-verified.",
+      "lastUpdated": "2026-05-25"
     },
     "robotics-maintenance-troubleshooting-1000": {
       "current": 393,

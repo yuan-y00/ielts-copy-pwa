@@ -36,7 +36,7 @@ const PACK_META_MAP: Record<WordPackId, WordPackMeta> = {
     shortTitle: '机器人研发 Sourced',
     description:
       '面向机器人研发、ROS2、Nav2、MoveIt2、ros2_control、Gazebo、SLAM、感知、控制、仿真和实验调试的来源驱动核心英语词包',
-    total: 111,
+    total: 216,
     fileName: 'robotics-rd-engineering-research-1000.json',
   },
   'ai-product-management-llm-products-1000': {
