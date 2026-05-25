@@ -472,6 +472,11 @@ The kinematics solver fails when the target is out of the workspace.
 **词性覆盖要求**:
 机器人研发 Sourced Core 不应只包含名词/术语。必须包含常用研发动词、短语动词、调试动作、控制动作、感知动作、仿真动作和实验动作。这些动词也必须来源驱动，不能无来源编写 example。
 
+
+机器人研发 Sourced Core 不应只包含名词和动词。
+还必须包含常用研发状态形容词，例如 real-time、noisy、robust、modular、misaligned、synchronized、stable、unstable、feasible、collision-free 等。
+这些形容词也必须来源驱动，不能无来源编写 example。
+
 ### 7.4 Robotics Maintenance Troubleshooting 1000
 
 - **packId**: robotics-maintenance-troubleshooting-1000
