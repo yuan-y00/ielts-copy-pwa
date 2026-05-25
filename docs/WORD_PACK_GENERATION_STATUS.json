@@ -16,11 +16,11 @@
       "note": "Do not generate more until cleanup pass is complete."
     },
     "robotics-rd-engineering-research-1000": {
-      "current": 293,
+      "current": 439,
       "status": "sourced_core",
       "target": null,
       "targetPolicy": "source_driven_quality_first",
-      "note": "Sourced Core: 77 adjectives added. Total 293 items. All source-verified.",
+      "note": "Sourced Core: 146 collocations/patterns added. Total 439 items. All source-verified.",
       "lastUpdated": "2026-05-25"
     },
     "robotics-maintenance-troubleshooting-1000": {

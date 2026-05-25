@@ -477,6 +477,12 @@ The kinematics solver fails when the target is out of the workspace.
 还必须包含常用研发状态形容词，例如 real-time、noisy、robust、modular、misaligned、synchronized、stable、unstable、feasible、collision-free 等。
 这些形容词也必须来源驱动，不能无来源编写 example。
 
+
+机器人研发 Sourced Core 必须包含来源驱动的 collocations 和 sentence patterns。
+这些搭配和句型比单个术语更接近真实研发沟通。
+所有机器人研发搭配和句型也必须有 sourceUrl、sourceTitle、sourceQuality、sourceEvidence、sourceChecked。
+禁止无来源生成研发搭配和句型。
+
 ### 7.4 Robotics Maintenance Troubleshooting 1000
 
 - **packId**: robotics-maintenance-troubleshooting-1000
