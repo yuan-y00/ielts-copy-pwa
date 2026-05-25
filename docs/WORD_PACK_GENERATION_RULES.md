@@ -428,21 +428,46 @@ The token cost is too high.
 We need a fallback response here.
 ```
 
-### 7.3 Robotics R&D Engineering Research 1000
+### 7.3 Robotics R&D Engineering Sourced Core
 
 - **packId**: robotics-rd-engineering-research-1000
-- **目标**: 500 条左右
-- **定位**: 面向机器人研发、论文阅读、ROS2/Nav2/MoveIt2/Gazebo、实验汇报和技术讨论
-- **额外字段**: researchArea, usageScene, workIntent, fullForm
+- **状态**: Sourced Core — 所有 item 必须有高质量来源支撑
+- **定位**: 面向机器人研发、ROS2、Nav2、MoveIt2、ros2_control、Gazebo、SLAM、感知、控制、仿真和实验调试的来源驱动核心英语词包
+- **额外字段**: researchArea, usageScene, workIntent, fullForm, sourceQuality, sourceEvidence, exampleSourceMode, sourceChecked
+- **数量**: 来源驱动，不设硬性 target。当前 ~110 条高质量 sourced items。
 
-example 风格：
+**来源规则（硬性）**:
+1. 所有 item 必须有 sourceUrl、sourceTitle、sourceQuality、sourceEvidence。
+2. sourceChecked 必须是 true。
+3. exampleSourceMode 必须是 verbatim_short_excerpt 或 source_grounded_rewrite。
+4. 禁止使用 robotics_rd_style_original。
+5. 来源必须是官方文档、官方 GitHub、ROS Discourse、StackExchange、高质量论文。
+6. 找不到来源的 term 不能保留在词包中。
+
+**优先来源**:
+- ROS2 / Nav2 / MoveIt2 / ros2_control / Gazebo 官方文档
+- PCL / OpenCV / Open3D 官方文档
+- 高质量论文 (arXiv, IEEE, RSS, ICRA, IROS)
+- ROS Discourse, Robotics StackExchange
+- 官方 GitHub README / issue
+
+example 风格（必须来源驱动）：
 ```
-The planner fails in narrow passages.
-The controller latency is too high.
-The node crashes during startup.
-The costmap looks too noisy.
-We need to tune this parameter.
+The node is not publishing to the topic.
+(来源: ROS2 Understanding Topics, https://docs.ros.org/...)
+
+The local costmap is not updating fast enough.
+(来源: Nav2 Configuring Costmaps, https://docs.nav2.org/...)
+
+The kinematics solver fails when the target is out of the workspace.
+(来源: MoveIt2 Kinematics, https://moveit.picknik.ai/...)
 ```
+
+**新增词条要求**:
+1. 确认来源真实可访问。
+2. sourceEvidence 必须能证明 term 和 example 不是瞎编的。
+3. 优先 source_grounded_rewrite（句子短，适合抄写，又保留准确信息）。
+4. sourceUrl 不能为空，不能是假链接。
 
 ### 7.4 Robotics Maintenance Troubleshooting 1000
 

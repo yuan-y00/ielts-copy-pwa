@@ -32,11 +32,11 @@ const PACK_META_MAP: Record<WordPackId, WordPackMeta> = {
   },
   'robotics-rd-engineering-research-1000': {
     id: 'robotics-rd-engineering-research-1000',
-    title: 'Robotics R&D Engineering Core',
-    shortTitle: '机器人研发 Core',
+    title: 'Robotics R&D Engineering Sourced Core',
+    shortTitle: '机器人研发 Sourced',
     description:
-      '面向机器人研发、ROS2、导航、感知、控制、仿真、实验和技术沟通的核心英语词包',
-    total: 707,
+      '面向机器人研发、ROS2、Nav2、MoveIt2、ros2_control、Gazebo、SLAM、感知、控制、仿真和实验调试的来源驱动核心英语词包',
+    total: 111,
     fileName: 'robotics-rd-engineering-research-1000.json',
   },
   'ai-product-management-llm-products-1000': {

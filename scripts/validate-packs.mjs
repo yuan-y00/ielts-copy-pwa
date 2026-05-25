@@ -334,6 +334,73 @@ for (const { file, packId } of PACKS) {
     totalWarnings++;
   }
 
+  // === robotics-rd strict source checks (Sourced Core) ===
+  const isRd = packId === 'robotics-rd-engineering-research-1000';
+  if (isRd) {
+    let rdSourceErrors = 0;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const prefix = `  [${i}]`;
+
+      if (!item.sourceUrl || item.sourceUrl.trim() === '') {
+        console.log(`${file}${prefix}: MISSING sourceUrl (required for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (!item.sourceTitle || item.sourceTitle.trim() === '') {
+        console.log(`${file}${prefix}: MISSING sourceTitle (required for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (!item.sourceQuality) {
+        console.log(`${file}${prefix}: MISSING sourceQuality (required for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (item.sourceChecked !== true) {
+        console.log(`${file}${prefix}: sourceChecked must be true (required for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (!item.sourceEvidence || item.sourceEvidence.trim() === '') {
+        console.log(`${file}${prefix}: MISSING sourceEvidence (required for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (!item.exampleSourceMode || !['verbatim_short_excerpt', 'source_grounded_rewrite'].includes(item.exampleSourceMode)) {
+        console.log(`${file}${prefix}: exampleSourceMode must be verbatim_short_excerpt or source_grounded_rewrite, got "${item.exampleSourceMode}"`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (item.exampleSourceMode === 'verbatim_short_excerpt' && item.isRealSourceSentence !== true) {
+        console.log(`${file}${prefix}: exampleSourceMode is verbatim_short_excerpt but isRealSourceSentence is not true`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (item.exampleSourceMode === 'source_grounded_rewrite' && item.isRealSourceSentence !== false) {
+        console.log(`${file}${prefix}: exampleSourceMode is source_grounded_rewrite but isRealSourceSentence is not false`);
+        errors++;
+        rdSourceErrors++;
+      }
+      if (item.sourceType === 'robotics_rd_style_original') {
+        console.log(`${file}${prefix}: sourceType is robotics_rd_style_original (banned for robotics-rd Sourced Core)`);
+        errors++;
+        rdSourceErrors++;
+      }
+      // example must contain the term or core of the term
+      if (typeof item.example === 'string' && typeof item.term === 'string') {
+        if (!exampleContainsTerm(item.term, item.example)) {
+          console.log(`${file}${prefix}: example does not contain term "${item.term}"`);
+          errors++;
+          rdSourceErrors++;
+        }
+      }
+    }
+    if (rdSourceErrors > 0) {
+      console.log(`\n  robotics-rd source check: ${rdSourceErrors} errors found`);
+    }
+  }
+
   // === Template duplication warnings ===
   let dupWarnings = 0;
   for (const [template, dupIds] of templateMap) {
